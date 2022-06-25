@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import {Text,View, TouchableOpacity, Switch} from 'react-native';
+import PropTypes from 'prop-types';
 import settings from '../settings';
 const {dayNames} = settings;
 
-const DayList = ({day, enabled, onUpdate}) => {
+const DayPickerItem = ({day, enabled, onUpdate}) => {
     const [isEnabled, setIsEnabled] = useState(enabled ?? false);
     
     const toggleSwitch = () => {
@@ -36,4 +37,10 @@ const DayList = ({day, enabled, onUpdate}) => {
     )
 }
 
-export default DayList
+export default DayPickerItem;
+
+DayPickerItem.propTypes = {
+    day: PropTypes.string,
+    enabled: PropTypes.bool,
+    onUpdate: PropTypes.func,
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import {View,Text,Switch,TouchableOpacity} from 'react-native';
+import {View,Text,Switch,TouchableOpacity,StyleSheet} from 'react-native';
+import PropTypes from 'prop-types';
 import DayPicker from './DayPicker';
 import { showTime,showFrequency } from '../utils';
 
@@ -7,22 +8,14 @@ import { showTime,showFrequency } from '../utils';
 const ListItem = ({item,onToggle, onEdit}) => {
   
     return (
-        <View style={{
-            
-            marginTop:20,
-            borderBottomWidth:1,
-            borderBottomColor: '#313034', 
-        }}>
-            <View style={{marginBottom:20,flexDirection: 'row',
-            justifyContent: 'space-between'}}>
+        <View style={styles.container}>
+            <View style={styles.row}>
                     
                     <TouchableOpacity
-                     onPress= {() => {onEdit()}}
-                    >
+                    style={{flex:1}}
+                     onPress= {onEdit}>
                     <View
-                        style={{
-                            opacity: item.status ? 1 : 0.5,
-                        }}>
+                        style={{opacity: item.status ? 1 : 0.5,}}>
                         <Text style={{color:'#fff',fontSize:18,fontWeight:'600'}}>{item.title}</Text>
                         <View style={{flexDirection:'row', justifyContent:'flex-start',marginTop:5}}>
                             <Text style={{color:'#fff',padding:5}}>{showFrequency(item.frequency)}</Text>
@@ -42,3 +35,28 @@ const ListItem = ({item,onToggle, onEdit}) => {
 }
 
 export default ListItem;
+
+const styles = StyleSheet.create({
+container: {       
+    marginTop:20,
+    borderBottomWidth:1,
+    borderBottomColor: '#313034', 
+},
+row: {
+    marginBottom:20,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+}
+})
+
+ListItem.propTypes = {
+    item: PropTypes.shape({
+        title : PropTypes.string,
+        frequency: PropTypes.array,
+        time: PropTypes.string,
+        id: PropTypes.number,
+        status : PropTypes.bool,
+    }) ,
+    onToggle: PropTypes.func, 
+    onEdit:  PropTypes.func,
+}

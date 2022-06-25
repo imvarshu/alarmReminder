@@ -4,16 +4,12 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import ListItem from './components/ListItem';
 import AddModal from './components/AddModal';
 import data from './data';
+import {createOrUpdate} from './utils';
 
 export default function App() {
   const [alarms, setAlarms] = useState(data);
   const [alarm, setAlarm] = useState({});
-  const[modalVisible,setModalVisible] = useState(true);
-
-
-  useEffect(()=>{
-    // console.log(modalVisible);
-  });
+  const[modalVisible,setModalVisible] = useState(false);
 
   const toggleStatus = (item) => {
     const copyAlarms = [...alarms];
@@ -31,22 +27,15 @@ export default function App() {
     setAlarm(selectedAlarm);
     setModalVisible(true);
   }
-  
+
   const hideModal = () => {
     setAlarm({});
     setModalVisible(false);
   }
+
   const onSave = (item) => {
-    const copyAlarms = [...alarms];
-    const index = alarms.findIndex(x => x.id === item.id);
-    if (index === -1) {
-      copyAlarms.push(item)
-    }
-    else {
-      copyAlarms[index] = item;
-    }
-  
-    setAlarms(copyAlarms);
+    const newAlrams = createOrUpdate(alarms, item);
+    setAlarms(newAlrams);
     hideModal();
   }
 
@@ -59,44 +48,21 @@ export default function App() {
   }
 
   return (
-    <View style={{
-        flex:1,
-        backgroundColor:'#000',
-        padding:20}}
-    >
-
-     <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:40}}>
+    <View style={styles.container}>
+     <View style={styles.header}>
        
-        <Text style={{
-          color:'#fff', 
-          fontSize: 36,
-          fontWeight:'600',
-          borderBottomWidth:1,
-          borderBottomColor: '#313034',
-          paddingBottom:20
-          
-        }}
-        >
+        <Text style={styles.title}>
             Reminder
         </Text>
         <TouchableOpacity 
-            onPress= {() => { createNewAlarm() }}
+            onPress= {createNewAlarm}
           >
             <Ionicons name="add" size={36} color="#FFA808" />
           </TouchableOpacity>
 
      </View>
      <View>
-        <Text style={{
-          color:'#fff', 
-          fontSize: 30,
-          marginTop:30,
-          fontWeight:'600',
-          borderBottomWidth:1,
-          borderBottomColor: '#313034',
-          paddingBottom:20
-        }}
-        >
+        <Text style={styles.subTitle}>
             List
         </Text>
      </View>
@@ -109,7 +75,7 @@ export default function App() {
      <AddModal
         alarm={alarm}
         visible={modalVisible}
-        close={()=>{setModalVisible(false) }}
+        onClose={hideModal}
         onSave={onSave}
         onDelete={() =>onDelete(alarm)}
       />
@@ -118,4 +84,34 @@ export default function App() {
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+        flex:1,
+        backgroundColor:'#000',
+        padding:20
+  },
+  header: {
+    flexDirection:'row',
+    justifyContent:'space-between',
+    marginTop:40,
+  },
+  title: {
+    color:'#fff', 
+    fontSize: 36,
+    fontWeight:'600',
+    borderBottomWidth:1,
+    borderBottomColor: '#313034',
+    paddingBottom:20
+    
+  },
+  subTitle: {
+    color:'#fff', 
+    fontSize: 30,
+    marginTop:30,
+    fontWeight:'600',
+    borderBottomWidth:1,
+    borderBottomColor: '#313034',
+    paddingBottom:20
+  },
 
+})

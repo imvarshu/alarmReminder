@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
-import {View,Text,Modal,TouchableOpacity,TextInput} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import {View, Modal, StyleSheet} from 'react-native';
+import PropTypes from 'prop-types';
 import settings from '../settings';
 import DayPicker from './DayPicker';
-import { showFrequency } from '../utils';
+import TimePicker from './TimePicker';
+import TheButton from './TheButton';
+import TheTextInput from './TheTextInput';
+import ModalHeader from './ModalHeader';
+import DayPickerButton from './DayPickerButton';
 const {dayNames} = settings;
 
-const AddModal = ({visible,close,alarm,onSave,onDelete}) => {
+const AddModal = ({visible, alarm, onClose, onSave,onDelete}) => {
     const [showPicker,setShowPicker] = useState (false); 
     // console.log(alarm);
     const [title, setTitle] = useState('');
@@ -29,11 +32,6 @@ const AddModal = ({visible,close,alarm,onSave,onDelete}) => {
             setTime(new Date())
 
     },[alarm])
-
-    const onChange = (event, selectedDate) => {
-        // console.log(selectedDate);
-        setTime(selectedDate);
-      };
 
     const onDayUpdate = (days) => {
         console.log('onDayUpdate',days);
@@ -73,97 +71,42 @@ const AddModal = ({visible,close,alarm,onSave,onDelete}) => {
             transparent={false}
             visible={visible}
             presentationStyle='formSheet'
-            onRequestClose={() => {close()}}
-            
+            onRequestClose={onClose}
         >
-            <View style={{flex:1,backgroundColor:'#000',padding:20}}>
-                <View style={{
-                    flexDirection:'row',
-                    justifyContent:'space-between',
-                    padding:20
-                    }}
-                >     
-                    <TouchableOpacity style={{}}
-                        onPress={() =>(close())}
-                    >
-                        <Text style={{color:'#FFA808',fontWeight:'600',fontSize:16}}>Cancel</Text>
-                        </TouchableOpacity>
-                        <Text style={{color:'#fff',fontWeight:'600',fontSize:16}}>Add Alarm</Text>
-                        <TouchableOpacity
-                        onPress={save}
-                        >
-                        <Text style={{color:'#FFA808',fontWeight:'600',fontSize:16}}>Save</Text>
-                        </TouchableOpacity>
-                        
-                 </View>
-                 <View>
-                 <DateTimePicker
-                        testID="dateTimePicker"
-                        display="spinner"
-                        value={time}
-                        mode='time'
-                        is24Hour={false}
-                        onChange={onChange}
-                        themeVariant="dark"
-                        />
-                 </View>
-                 <View>
-                 <TextInput
-                    style={{
-                        marginTop:20,
-                        backgroundColor: '#2C2B2D',
-                        padding:15,
-                        borderRadius:8,
-                        color: '#fff',
-                    }}
-                    onChangeText= {setTitle}
-                    placeholder="Remind me for"
-                    placeholderTextColor= '#9D9EA7'
-                    value= {title}
-                   
-                />
-                 </View>
-                 <View>
-                 <TouchableOpacity style={{
-                    flexDirection:'row',
-                    justifyContent:'space-between',
-                    marginTop:20,
-                    backgroundColor: '#2C2B2D',
-                    padding:15,
-                    borderRadius:8,
-                    
-
-                 }}
-                 onPress = {()=> setShowPicker(true)}
-                 >
-                    <Text style={{color:'#fff'}}>Repeat</Text>
-                    <View style={{flexDirection:'row', justifyContent:'flex-start',alignItems:'center'}}>
-                        <Text style={{color:'#9D9EA7'}}>{ showFrequency(frequency)}</Text>
-                        <Ionicons name="chevron-forward" size={18} color="#9D9EA7" />
-                    </View> 
-                 </TouchableOpacity>
+            <View style={styles.container}>
+                <ModalHeader onCancle={onClose} onSave={save} />
+                <TimePicker time={time} onChange={setTime} />
+                <TheTextInput value={title} onChangeText= {setTitle}/>
+                <DayPickerButton onPress = {()=> setShowPicker(true)} frequency={frequency}/>    
                  {
-                   alarm.id &&
-                        <TouchableOpacity style={{
-                            flexDirection:'row',
-                            justifyContent:'center',
-                            marginTop:20,
-                            backgroundColor: '#2C2B2D',
-                            padding:15,
-                            borderRadius:8,
-                }}
-                    onPress = {onDelete}
-                >
-                    <Text style = {{color:'#F5453A', fontSize:16,fontWeight:'600'}}>Delete</Text>
-                </TouchableOpacity>
+                   alarm.id && <TheButton title="Delete" onPress={onDelete} />
                  }
-                 </View>
-                 
-                   <DayPicker selected={frequency}  visible={showPicker} onClose={onDayUpdate} /> 
-
-                 </View>
-                
-            </Modal>
+                <DayPicker selected={frequency}  visible={showPicker} onClose={onDayUpdate} /> 
+            </View>
+        </Modal>
     )
 }
 export default AddModal;
+
+const styles = StyleSheet.create({
+    container : {
+        flex:1,
+        backgroundColor:'#000',
+        padding:20,
+    },
+   
+})
+
+AddModal.propTypes = {
+    visible: PropTypes.bool,
+    alarm: PropTypes.shape({
+        title: PropTypes.string,
+        frequency: PropTypes.array,
+        time: PropTypes.string,
+        id: PropTypes.number,
+        status: PropTypes.bool,
+    }),
+    onClose: PropTypes.func,
+    onSave: PropTypes.func,
+    onDelete: PropTypes.func,
+}

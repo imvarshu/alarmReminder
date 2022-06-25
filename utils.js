@@ -1,8 +1,5 @@
 const showTime = (time) => {
- 
-    var d = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit" });
-    
-  return d;
+    return new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: "2-digit" });
 }
 
 const showFrequency = (frequency) => {
@@ -26,4 +23,20 @@ const showFrequency = (frequency) => {
     return 'Never';
 }
 
-export {showTime,showFrequency};
+const createOrUpdate = (arr, obj) => {
+    const list = [...arr];
+    const index = list.findIndex(x => x.id === obj.id);
+    if (index === -1) {
+        list.push(obj)
+    }
+    else {
+        list[index] = obj;
+    }
+    return list;
+}
+
+export {
+    showTime,
+    showFrequency,
+    createOrUpdate
+};

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {View,Text,TouchableOpacity,Modal,Switch} from 'react-native';
 import settings from '../settings';
-import DayList from './DayList';
+import DayPickerItem from './DayPickerItem';
 
 const {dayNames} = settings;
 
@@ -51,7 +51,7 @@ const DayPicker = ({selected, visible, onClose}) => {
                 <View />
             </View>
             {
-                dayNames.map((day,index) => <DayList day={day} enabled={isEnabled(day)} onUpdate={onUpdate} key={index} />)
+                dayNames.map((day,index) => <DayPickerItem day={day} enabled={isEnabled(day)} onUpdate={onUpdate} key={index} />)
             }
             </View>
         </Modal>
